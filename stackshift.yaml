@@ -1,0 +1,15 @@
+application: hphe-designer
+services:
+  frontend:
+    type: web
+    visibility: public
+    rootDirectory: frontend
+    port: 3000
+    bindings:
+      - service: api
+        env: HPHE_API_URL
+  api:
+    type: web
+    visibility: private
+    rootDirectory: backend
+    port: 8000

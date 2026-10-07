@@ -1,0 +1,56 @@
+@import "tailwindcss";
+@config "../../tailwind.config.ts";
+
+:root {
+  color-scheme: light;
+  --font-sans: "Inter", "SF Pro Display", "Segoe UI", Arial, sans-serif;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  min-height: 100%;
+}
+
+body {
+  margin: 0;
+  color: #17202e;
+  background:
+    radial-gradient(circle at 83% 1%, rgba(13, 159, 139, 0.08), transparent 24rem),
+    #f1f4f6;
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+}
+
+button,
+input {
+  font: inherit;
+}
+
+input[type="number"]::-webkit-inner-spin-button,
+input[type="number"]::-webkit-outer-spin-button {
+  margin: 0;
+  appearance: none;
+}
+
+input[type="number"] {
+  appearance: textfield;
+}
+
+@keyframes flow-right {
+  from { transform: translateX(-8px); opacity: 0.2; }
+  45% { opacity: 1; }
+  to { transform: translateX(8px); opacity: 0.2; }
+}
+
+@keyframes flow-left {
+  from { transform: translateX(8px); opacity: 0.2; }
+  45% { opacity: 1; }
+  to { transform: translateX(-8px); opacity: 0.2; }
+}
+
+.flow-hot { animation: flow-right 2s ease-in-out infinite; }
+.flow-cold { animation: flow-left 2s ease-in-out infinite; }

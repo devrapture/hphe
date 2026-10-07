@@ -2,13 +2,14 @@ import { NextResponse } from "next/server";
 
 const DEFAULT_API_URL = "http://localhost:8000";
 
-function backendUrl(): string {
-  return (process.env.HPHE_API_URL ?? DEFAULT_API_URL).replace(/\/$/, "");
+function calculationUrl(): URL {
+  const baseUrl = process.env.HPHE_API_URL ?? DEFAULT_API_URL;
+  return new URL("calculate", `${baseUrl.replace(/\/$/, "")}/`);
 }
 
 export async function POST(request: Request) {
   try {
-    const response = await fetch(`${backendUrl()}/calculate`, {
+    const response = await fetch(calculationUrl(), {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: await request.text(),

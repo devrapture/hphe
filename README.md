@@ -146,6 +146,30 @@ docker run --rm --name hphe-frontend --network hphe-network \
 Open [http://localhost:3000](http://localhost:3000). Both images include health
 checks and use unprivileged runtime users.
 
+## Deploy to Vercel
+
+The root `vercel.json` defines two independently built services:
+
+- `frontend`: the public Next.js service, routed at `/(.*)`
+- `backend`: an internal FastAPI service with no direct public rewrite
+
+The frontend owns the public `/api/calculate` route. That server-side Next.js
+route forwards requests to FastAPI through a Vercel service binding. Vercel
+injects the backend URL into the frontend runtime as `HPHE_API_URL`; do not add
+that variable manually in the Vercel dashboard. The browser never receives the
+internal backend URL.
+
+After importing the Git repository as a Vercel project, Vercel detects the root
+manifest and builds both services. To run the same multi-service routing model
+locally with the Vercel CLI, use:
+
+```bash
+vercel dev -L
+```
+
+The `HPHE_API_URL=http://localhost:8000` fallback remains available for the
+two-terminal local workflow documented above.
+
 ## Deploy to StackShift
 
 The root `stackshift.yaml` describes one StackShift application with:

@@ -1,13 +1,13 @@
 "use client";
 
 import { Flame, Snowflake, Waves } from "lucide-react";
-import type { HPHEInput } from "@/types/hphe";
+import type { HPHEInput, HPHEInputDraft } from "@/types/hphe";
 
 type NumericKey = keyof HPHEInput;
 
 interface InputPanelProps {
-  values: HPHEInput;
-  onChange: (key: NumericKey, value: number) => void;
+  values: HPHEInputDraft;
+  onChange: (key: NumericKey, value: string) => void;
   disabled?: boolean;
 }
 
@@ -15,7 +15,7 @@ interface FieldProps {
   id: NumericKey;
   label: string;
   unit: string;
-  value: number;
+  value: string;
   step?: number;
   integer?: boolean;
   onChange: InputPanelProps["onChange"];
@@ -36,10 +36,7 @@ function Field({ id, label, unit, value, step = 0.1, integer, onChange, disabled
           step={integer ? 1 : step}
           value={value}
           disabled={disabled}
-          onChange={(event) => {
-            const next = Number(event.target.value);
-            onChange(id, integer ? Math.trunc(next) : next);
-          }}
+          onChange={(event) => onChange(id, event.target.value)}
           className="min-w-0 flex-1 bg-transparent px-3 text-sm font-semibold tabular-nums text-slate-800 outline-none disabled:cursor-not-allowed disabled:opacity-60"
         />
         <span className="border-l border-slate-200 px-2.5 text-[11px] font-medium text-slate-400">

@@ -1,7 +1,7 @@
-import type { HPHEInput } from "@/types/hphe";
+import type { HPHEInputDraft } from "@/types/hphe";
 
 interface Props {
-  inputs: HPHEInput;
+  inputs: HPHEInputDraft;
 }
 
 export function HeatExchangerDiagram({ inputs }: Props) {

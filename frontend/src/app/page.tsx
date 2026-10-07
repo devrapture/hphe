@@ -8,16 +8,57 @@ import { InputPanel } from "@/components/InputPanel";
 import { ResultsPanel } from "@/components/ResultsPanel";
 import { TemperatureChart } from "@/components/TemperatureChart";
 import { calculateHPHE } from "@/lib/api";
-import { DEFAULT_INPUTS, type HPHEInput, type HPHEResult } from "@/types/hphe";
+import {
+  DEFAULT_INPUTS,
+  toInputDraft,
+  type HPHEInput,
+  type HPHEInputDraft,
+  type HPHEResult,
+} from "@/types/hphe";
+
+const INPUT_LABELS: Record<keyof HPHEInput, string> = {
+  hot_inlet_temp: "Hot inlet temperature",
+  cold_inlet_temp: "Cold inlet temperature",
+  hot_mass_flow: "Hot mass flow rate",
+  cold_mass_flow: "Cold mass flow rate",
+  number_of_pipes: "Number of heat pipes",
+  pipe_diameter_mm: "Pipe outer diameter",
+  pipe_length_m: "Pipe length",
+  u_value: "Overall U-value",
+};
+
+function readNumber(draft: HPHEInputDraft, key: keyof HPHEInput): number {
+  const rawValue = draft[key].trim();
+  const value = Number(rawValue);
+
+  if (rawValue === "" || !Number.isFinite(value)) {
+    throw new Error(`${INPUT_LABELS[key]} must be a valid number.`);
+  }
+
+  return value;
+}
+
+function parseInputs(draft: HPHEInputDraft): HPHEInput {
+  return {
+    hot_inlet_temp: readNumber(draft, "hot_inlet_temp"),
+    cold_inlet_temp: readNumber(draft, "cold_inlet_temp"),
+    hot_mass_flow: readNumber(draft, "hot_mass_flow"),
+    cold_mass_flow: readNumber(draft, "cold_mass_flow"),
+    number_of_pipes: readNumber(draft, "number_of_pipes"),
+    pipe_diameter_mm: readNumber(draft, "pipe_diameter_mm"),
+    pipe_length_m: readNumber(draft, "pipe_length_m"),
+    u_value: readNumber(draft, "u_value"),
+  };
+}
 
 export default function Home() {
-  const [inputs, setInputs] = useState<HPHEInput>(DEFAULT_INPUTS);
+  const [inputs, setInputs] = useState<HPHEInputDraft>(() => toInputDraft(DEFAULT_INPUTS));
   const [calculatedInputs, setCalculatedInputs] = useState<HPHEInput>(DEFAULT_INPUTS);
   const [result, setResult] = useState<HPHEResult | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  function updateInput(key: keyof HPHEInput, value: number) {
+  function updateInput(key: keyof HPHEInput, value: string) {
     setInputs((current) => ({ ...current, [key]: value }));
     setError(null);
   }
@@ -26,9 +67,10 @@ export default function Home() {
     setLoading(true);
     setError(null);
     try {
-      const nextResult = await calculateHPHE(inputs);
+      const parsedInputs = parseInputs(inputs);
+      const nextResult = await calculateHPHE(parsedInputs);
       setResult(nextResult);
-      setCalculatedInputs({ ...inputs });
+      setCalculatedInputs(parsedInputs);
     } catch (caught) {
       setError(caught instanceof Error ? caught.message : "Calculation failed.");
     } finally {
@@ -37,7 +79,7 @@ export default function Home() {
   }
 
   function resetInputs() {
-    setInputs({ ...DEFAULT_INPUTS });
+    setInputs(toInputDraft(DEFAULT_INPUTS));
     setResult(null);
     setError(null);
   }

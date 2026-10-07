@@ -9,6 +9,10 @@ export interface HPHEInput {
   u_value: number;
 }
 
+export type HPHEInputDraft = {
+  [Key in keyof HPHEInput]: string;
+};
+
 export interface HPHEResult {
   heat_transfer_area_m2: number;
   hot_capacity_rate_w_per_k: number;
@@ -34,3 +38,16 @@ export const DEFAULT_INPUTS: HPHEInput = {
   pipe_length_m: 1.2,
   u_value: 60,
 };
+
+export function toInputDraft(inputs: HPHEInput): HPHEInputDraft {
+  return {
+    hot_inlet_temp: String(inputs.hot_inlet_temp),
+    cold_inlet_temp: String(inputs.cold_inlet_temp),
+    hot_mass_flow: String(inputs.hot_mass_flow),
+    cold_mass_flow: String(inputs.cold_mass_flow),
+    number_of_pipes: String(inputs.number_of_pipes),
+    pipe_diameter_mm: String(inputs.pipe_diameter_mm),
+    pipe_length_m: String(inputs.pipe_length_m),
+    u_value: String(inputs.u_value),
+  };
+}

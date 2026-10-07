@@ -1,15 +1,31 @@
-application: hphe-designer
-services:
-  frontend:
-    type: web
-    visibility: public
-    rootDirectory: frontend
-    port: 3000
-    bindings:
-      - service: api
-        env: HPHE_API_URL
-  api:
-    type: web
-    visibility: private
-    rootDirectory: backend
-    port: 8000
+apiVersion: stackshift.com/v1
+kind: Application
+metadata:
+  name: hphe-designer
+spec:
+  services:
+    frontend:
+      type: web
+      repository: devrapture/hphe
+      branch: main
+      rootDirectory: frontend
+      runtime: nodejs
+      deploymentRuntime: containerd
+      visibility: public
+      port: 3000
+      bindings:
+        - service: api
+          env: HPHE_API_URL
+    api:
+      type: web
+      repository: devrapture/hphe
+      branch: main
+      rootDirectory: backend
+      runtime: python
+      deploymentRuntime: containerd
+      visibility: private
+      port: 8000
+  environments:
+    production:
+      branchPattern: main
+      autoDeploy: true
